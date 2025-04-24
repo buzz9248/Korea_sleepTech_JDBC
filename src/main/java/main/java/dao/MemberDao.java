@@ -1,7 +1,7 @@
 package main.java.dao;
 
 // === DAO 패턴 적용 === //
-// 1) DAO 패턴 정의
+// 1. DAO 패턴 정의
 // : Data Access Object
 // - DB와의 접근 로직을 하나의 클래스로 '캡슐화'하여 애플리케이션의 다른 부분과
 //   , DB 처리 코드를 분리하는 설계 패턴
@@ -27,12 +27,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-// MemberDao 클래스
+// MemberDAo 클래스
 // : Member 테이블에 대한 CRUD 작업을 처리
 public class MemberDao {
-    // 1. 아이디(id)를 기준으로 사용자 정보를 가져오는 메서드
+
+    // 1. Read(단건): 아이디(id)를 기준으로 사용자 정보를 가져오는 메서드
     public Member getMemberById(int id) throws SQLException {
-        // +) get + 사용자 정보 + By + 찾고자 하는 컬러명
+        // +) get + 사용자 정보 + By + 찾고자 하는 컬럼명
 
         // DBConnection을 통해 DB 연결을 가져옴
         Connection conn = DBConnection.getConnection(); // static 메서드: 클래스명으로 호출
@@ -54,7 +55,9 @@ public class MemberDao {
         if (rs.next()) { // 결과 집합에 다음 행이 있으면 true 반환
 
             // Member 객체 생성 >> 결과 저장
-            member = new Member(rs.getInt("id"), rs.getString("name"), rs.getString("email"));
+            member = new Member(rs.getInt("id")
+                    , rs.getString("name")
+                    , rs.getString("email"));
         }
 
         // 리소스 해제
@@ -126,14 +129,14 @@ public class MemberDao {
 
         // SQL 쿼리 작성
         // cf) StringBuilder
-        //      : 자바에서 가변 문자열을 만드는 클래스
-        //      : 하나의 객체에 계속 문자열을 추가하거나 수정 가능
+        //     : 자바에서 가변 문자열을 만드는 클래스
+        //     : 하나의 객체에 계속 문자열을 추가하거나 수정 가능
         // - java.lang 패키지의 클래스
 
         // +) 자바의 String 문자열 타입은 "불변(immutable)"
         // >> 메모리 낭비 + 속도 저하
-//        String str = "Hello";
-//        str += " JDBC"; // str에 " JDBC"를 추가한 것이 아니라! 기존 문자열은 버려지고 새로운 String 객체가 생성!
+        // String str = "Hello";
+        // str += " JDBC"; // str에 " JDBC"를 추가한 것이 아니라! 기존 문자열은 버려지고 새로운 String 객체가 생성!
 
         StringBuilder sql = new StringBuilder("UPDATE member SET ");
 
@@ -149,7 +152,7 @@ public class MemberDao {
 
         // 마지막에 붙는 콤마와 공백을 제거
         // : 위에서 name 또는 email 중 최소 하나는! true 이기 때문에
-        //      , 마지막 두 글자(", ")을 제거
+        //   , 마지막 두 글자(", ")을 제거
         sql.deleteCharAt(sql.length() - 2); // 콤마까지 제거
 
         // WHERE 절 추가 (어떤 사용자인지 특정 - id 기준)
@@ -161,11 +164,11 @@ public class MemberDao {
         // 파라미터 인덱스 설정 (1부터 시작)
         int parameterIndex = 1;
 
-        if(updateName) {
+        if (updateName) {
             pstmt.setString(parameterIndex++, member.getName());
         }
 
-        if(updateEmail) {
+        if (updateEmail) {
             pstmt.setString(parameterIndex++, member.getEmail());
         }
 
@@ -178,7 +181,7 @@ public class MemberDao {
         conn.close();
     }
 
-    // 4. Delete: 사용자 정보 삭제 (id기준)
+    // 4. Delete: 사용자 정보 삭제 (id 기준)
     public void deleteMember(int id) throws SQLException {
         // try-with-resources 구문 (JAVA 7 부터 도입)
         // : 자원을 자동으로 닫아주는 기능
@@ -187,16 +190,15 @@ public class MemberDao {
         // } catch (...) {
         //      예외 처리
         // }
+
         try (Connection conn = DBConnection.getConnection()) {
             String sql = "DELETE FROM member WHERE id = ?";
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
-
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             e.printStackTrace();
         }
     }
-
 }

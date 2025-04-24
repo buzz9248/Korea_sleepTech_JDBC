@@ -12,7 +12,7 @@ public class MemberManager {
         Scanner sc = new Scanner(System.in);
         MemberDao memberDao = new MemberDao();
 
-        while(true) {
+        while (true) {
             System.out.println("1. 사용자 단건 조회");
             System.out.println("2. 사용자 전체 조회");
             System.out.println("3. 사용자 추가");
@@ -27,30 +27,24 @@ public class MemberManager {
                 case "1":
                     viewMemberById(sc, memberDao);
                     break;
-
                 case "2":
                     viewAllMembers(memberDao);
                     break;
-
                 case "3":
                     addMember(sc, memberDao);
                     break;
-
                 case "4":
                     updateMember(sc, memberDao);
                     break;
-
                 case "5":
                     deleteMember(sc, memberDao);
                     break;
-
                 case "6":
                     System.out.println("프로그램을 종료합니다.");
                     sc.close();
                     return;
-
                 default:
-                    System.out.println("잘못된 입력입니다. 다시 시도해 주세요.");
+                    System.out.println("잘못된 입력입니다. 다시 시도해주세요.");
                     break;
             }
         }
@@ -63,7 +57,7 @@ public class MemberManager {
 
         Member member = memberDao.getMemberById(id);
 
-        if(member != null) {
+        if (member != null) {
             System.out.println(member);
         } else {
             System.out.println("해당 ID의 사용자를 찾을 수 없습니다.");
@@ -74,7 +68,7 @@ public class MemberManager {
     private void viewAllMembers(MemberDao memberDao) throws SQLException {
         List<Member> members = memberDao.findAll();
 
-        if(members.isEmpty()) {
+        if (members.isEmpty()) {
             System.out.println("등록된 사용자가 없습니다.");
         } else {
 //            members.forEach(member -> System.out.println(member.toString()));
@@ -104,7 +98,8 @@ public class MemberManager {
         int id = Integer.parseInt(sc.nextLine());
 
         Member member = memberDao.getMemberById(id);
-        if(member == null) {
+
+        if (member == null) {
             System.out.println("해당 ID의 사용자를 찾을 수 없습니다.");
             return;
         }
@@ -114,11 +109,11 @@ public class MemberManager {
         System.out.println("사용자의 새 이메일 (변경하지 않으려면 Enter)");
         String newEmail = sc.nextLine();
 
-        if(!newName.isEmpty()) {
+        if (!newName.isEmpty()) {
             member.setName(newName);
         }
 
-        if(!newEmail.isEmpty()) {
+        if (!newEmail.isEmpty()) {
             member.setEmail(newEmail);
         }
 
@@ -134,5 +129,4 @@ public class MemberManager {
         memberDao.deleteMember(id);
         System.out.println("사용자가 성공적으로 삭제되었습니다.");
     }
-
 }
